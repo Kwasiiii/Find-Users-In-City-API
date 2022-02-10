@@ -11,6 +11,9 @@ import jwt
 from jwt_auth.serializer.populated import PopulatedProductSerializer
 from .serializer.common import UserSerializer
 
+from city.models import City
+from city.serializers.common import CitySerializer
+
 User = get_user_model()
 
 class RegisterView(APIView):
@@ -50,10 +53,20 @@ class UserDetailView(APIView):
         return Response(serialized_user.data, status=status.HTTP_200_OK)
 
 class UserListView(APIView):
-    # permission_classes = (IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def get(self, _request):
         user = User.objects.all()
         serialized_user = PopulatedProductSerializer(user, many = True)
         return Response(serialized_user.data, status=status.HTTP_200_OK)
 
+class CityUsersView(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def get(self, _request, city):
+        user = User.objects.filter(city__name = city)
+        cities = City.objects.get(name = city)
+        serialized_city = CitySerializer(cities)
+        print(serialized_city)
+        serialized_user = PopulatedProductSerializer(user, many = True)
+        return Response([serialized_user.data, serialized_city.data], status= status.HTTP_200_OK)
