@@ -7,3 +7,7 @@ class User(AbstractUser):
     email = models.CharField(max_length=50, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    city = models.ManyToManyField(
+        'city.City',
+        related_name= "jwt_auth"
+    )
