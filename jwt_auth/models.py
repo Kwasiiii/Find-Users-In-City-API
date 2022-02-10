@@ -9,5 +9,5 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50)
     city = models.ManyToManyField(
         'city.City',
-        related_name= "jwt_auth"
+        related_name= "jwt_auth",
     )

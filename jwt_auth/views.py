@@ -5,8 +5,10 @@ from rest_framework.exceptions import PermissionDenied
 from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 import jwt
+
+from jwt_auth.serializer.populated import PopulatedProductSerializer
 from .serializer.common import UserSerializer
 
 User = get_user_model()
@@ -46,3 +48,12 @@ class UserDetailView(APIView):
         user = User.objects.get(pk=request.user.id)
         serialized_user = UserSerializer(user)
         return Response(serialized_user.data, status=status.HTTP_200_OK)
+
+class UserListView(APIView):
+    # permission_classes = (IsAuthenticatedOrReadOnly)
+
+    def get(self, _request):
+        user = User.objects.all()
+        serialized_user = PopulatedProductSerializer(user, many = True)
+        return Response(serialized_user.data, status=status.HTTP_200_OK)
+
